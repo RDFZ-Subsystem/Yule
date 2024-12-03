@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Website</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: flex-end;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #34495e;
+        }
+
+        /* 主要内容区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/static/images/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 2rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 关于我部分 */
+        .about {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-image {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 项目展示 */
+        .projects {
+            background-color: #fff;
+            padding: 5rem 2rem;
+        }
+
+        .projects h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .project-info {
+            padding: 1.5rem;
+        }
+
+        /* 联系方式 */
+        .contact {
+            padding: 5rem 2rem;
+            text-align: center;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .contact h2 {
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #3498db;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#games">Games</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- 主页面英雄区域 -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Welcome to HardyYe's World</h1>
+            <p>FRC FTC Programmer | Web Developer | AI Enthusiast</p>
+        </div>
+    </section>
+
+    <!-- 关于我 -->
+    <section id="about" class="about">
+        <h2>About Me</h2>
+        <div class="about-content">
+            <img src="/static/images/profile.jpg" alt="Profile Picture" class="about-image">
+            <div>
+                <h3>Who Am I?</h3>
+                <p>I'm a passionate programmer with experience in FTC robotics programming and web development. I love creating innovative solutions and learning new technologies.</p>
+                <p>My expertise includes:</p>
+                <ul>
+                    <li>FRC FTC Robot Programming</li>
+                    <li>Web Development</li>
+                    <li>Computer Science Learner</li>
+                    <li>Problem Solving</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 在projects和contact部分之间添加games部分 -->
+    <section id="games" class="games">
+        <h2>My Games</h2>
+        <div class="games-list">
+            <a href="/PinballGame" class="game-link">Bouncing Ball Game</a>
+            <a href="/PlaneWarsGame" class="game-link">Space Shooter</a>
+            <a href="/GreedySnakeGame" class="game-link">Snake Game</a>
+            <a href="/FruitNinjaGame" class="game-link">Fruit Cutting Game</a>
+            <a href="/MarioGame" class="game-link">Mario Game</a>
+            <a href="/2048Game" class="game-link">2048 Game</a>
+            <a href="/TetrisGame" class="game-link">Tetris Game</a>
+            <a href="/TwoPlayersTetrisGame" class="game-link">Two Players Tetris Game</a>
+            <a href="/" class="game-link">More Coming Soon...</a>
+        </div>
+    </section>
+
+    <!-- 添加相应的CSS样式 -->
+    <style>
+        /* 游戏列表样式 */
+        .games {
+            padding: 5rem 2rem;
+            background-color: #34495e;
+            text-align: center;
+        }
+
+        .games h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+        }
+
+        .games-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .game-link {
+            display: block;
+            padding: 1rem 2rem;
+            background-color: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s, background-color 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .game-link:hover {
+            transform: translateY(-3px);
+            background-color: #3498db;
+        }
+
+        /* 确保响应式设计也包含games部分 */
+        @media (max-width: 768px) {
+            .games {
+                padding: 3rem 1rem;
+            }
+            
+            .games h2 {
+                font-size: 2rem;
+            }
+            
+            .game-link {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <!-- 项目展示 -->
+    <section id="projects" class="projects">
+        <h2>My Projects</h2>
+        <div class="project-grid">
+            <div class="project-card">
+                <img src="/static/images/project1.jpg" alt="FTC Project">
+                <div class="project-info">
+                    <h3>FTC Robot Control</h3>
+                    <p>Advanced autonomous navigation system for FTC robots using odometry.</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <img src="/static/images/project2.jpg" alt="Web Project">
+                <div class="project-info">
+                    <h3>Personal Website</h3>
+                    <p>A responsive personal portfolio website built with modern web technologies.</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <img src="/static/images/project3.jpg" alt="AI Project">
+                <div class="project-info">
+                    <h3>AI Applications</h3>
+                    <p>Exploring machine learning and artificial intelligence applications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section id="contact" class="contact">
+        <h2>Get In Touch</h2>
+        <p>Feel free to reach out to me for collaboration or questions!</p>
+        <div class="social-links">
+            <a href="https://github.com/YCY5449" target="_blank">GitHub</a>
+            <a href="mailto:yechaoyu42@icloud.com">Email</a>
+            <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
+        </div>
+    </section>
+</body>
+</html>
