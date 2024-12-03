@@ -263,7 +263,7 @@
         </div>
     </div>
 
-    <!-- 游戏结束���态框 -->
+    <!-- 游戏结束态框 -->
     <div class="game-over-modal" id="gameOverModal">
         <div class="modal-content">
             <h2 class="modal-title">Game Over!</h2>
@@ -694,6 +694,7 @@
         }
  
         function resetBothGames() {
+            // 清除现有的游戏循环
             if (gameInterval) {
                 clearInterval(gameInterval);
             }
@@ -702,9 +703,13 @@
             game1 = new TetrisGame('gameBoard1', 'nextPiece1', 'scoreValue1');
             game2 = new TetrisGame('gameBoard2', 'nextPiece2', 'scoreValue2');
             
-            // 设置对手
+            // 重新设置对手关系
             game1.setOpponent(game2);
             game2.setOpponent(game1);
+            
+            // 清除游戏板内容
+            document.getElementById('gameBoard1').innerHTML = '';
+            document.getElementById('gameBoard2').innerHTML = '';
             
             // 重置所有显示
             document.getElementById('scoreValue1').textContent = '0';
@@ -718,13 +723,30 @@
             document.getElementById('gameOverStatus2').textContent = 'false';
             
             // 重置游戏板透明度
-            document.querySelector(`#${game1.boardId}`).style.opacity = '1';
-            document.querySelector(`#${game2.boardId}`).style.opacity = '1';
+            document.getElementById('gameBoard1').style.opacity = '1';
+            document.getElementById('gameBoard2').style.opacity = '1';
+            
+            // 重新添加暂停和游戏结束屏幕
+            ['gameBoard1', 'gameBoard2'].forEach(boardId => {
+                const board = document.getElementById(boardId);
+                board.innerHTML = `
+                    <div id="pauseScreen${boardId.slice(-1)}" class="pause-screen">
+                        <div class="pause-text">PAUSE</div>
+                    </div>
+                    <div id="gameOverScreen${boardId.slice(-1)}" class="game-over-screen">
+                        <div class="game-over-text">Your Game Is Over</div>
+                    </div>
+                `;
+            });
             
             // 隐藏所有游戏结束相关的显示
             document.getElementById('gameOverModal').style.display = 'none';
-            document.getElementById('gameOverScreen1').style.display = 'none';
-            document.getElementById('gameOverScreen2').style.display = 'none';
+            document.querySelectorAll('.game-over-screen').forEach(screen => {
+                screen.style.display = 'none';
+            });
+            document.querySelectorAll('.pause-screen').forEach(screen => {
+                screen.style.display = 'none';
+            });
             
             // 初始化两个游戏
             game1.init();
