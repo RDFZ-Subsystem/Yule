@@ -53,6 +53,7 @@
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
         </select>
+        <button id="applyDifficulty">Apply Difficulty</button>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
     </div>
 
@@ -74,30 +75,48 @@
         let dx = 0;
         let dy = 0;
         let speed = 5; // 初始速度
+        let initialSpeed = [5, 7, 10];
         let gameLoop;
         let changingDirection = false;
+        let changingDifficulty = false;
         let timeElapsed = 0;
         let speedIncreaseInterval = 5000;
 
         // 根据选择的难度设置游戏参数
         function setDifficulty() {
+            if (changingDifficulty) return;
             const difficulty = difficultySelect.value;
             switch (difficulty) {
                 case 'easy':
-                    speed = 5;
+                    initialSpeed = 5;
                     speedIncreaseInterval = 7000; // 每7秒增加一次速度
                     break;
                 case 'medium':
-                    speed = 7;
+                    initialSpeed = 7;
                     speedIncreaseInterval = 5000; // 每5秒增加一次速度
                     break;
                 case 'hard':
-                    speed = 10;
+                    initialSpeed = 10;
                     speedIncreaseInterval = 3000; // 每3秒增加一次速度
                     break;
             }
             clearInterval(gameLoop);
             gameLoop = setInterval(game, 1000 / speed);
+            changingDifficulty = true;
+        }
+
+        function setInitialSpeed() {
+            switch (difficulty) {
+                case 'easy':
+                    speed = initialSpeed[0];
+                    break;
+                case 'medium':
+                    speed = initialSpeed[1];
+                    break;
+                case 'hard':
+                    speed = initialSpeed[2];
+                    break;
+            }
         }
 
         // 游戏主循环
@@ -127,6 +146,7 @@
                 snake.pop();
             }
             changingDirection = false;
+            changingDifficulty = false;
         }
 
         // 绘制蛇
@@ -191,6 +211,7 @@
             scoreElement.textContent = score;
             timeElapsed = 0;
             setDifficulty(); // 根据选择的难度设置游戏参数
+            setInitialSpeed();
         }
 
         // 键盘控制
@@ -221,6 +242,9 @@
             }
         });
 
+        document.getElementById('applyDifficulty').addEventListener('click', setDifficulty);
+        document.addEventListener('keydown', setDifficulty);
+
         // 增加速度的函数
         function increaseSpeed() {
             speed += 0.5;
@@ -230,6 +254,7 @@
 
         // 开始游戏循环
         setDifficulty();
+        setInitialSpeed();
         setInterval(() => {
             timeElapsed += 1000;
             if (timeElapsed >= speedIncreaseInterval) {
