@@ -84,6 +84,21 @@
             background: #ff4444;
             transition: width 0.3s ease;
         }
+
+        .enemy {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #ff0000;
+        }
+
+        .enemy-health {
+            position: absolute;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            width: 30px;
+        }
     </style>
 </head>
 <body>
@@ -232,7 +247,8 @@
                     y: -30,
                     width: 30,
                     height: 30,
-                    color: '#ff0000'
+                    color: '#ff0000',
+                    health: 2 // 每个敌人的初始血量
                 });
             }
         }
@@ -255,10 +271,13 @@
             for (let i = enemies.length - 1; i >= 0; i--) {
                 for (let j = bullets.length - 1; j >= 0; j--) {
                     if (collision(bullets[j], enemies[i])) {
-                        enemies.splice(i, 1);
+                        enemies[i].health--; // 减少敌人的血量
                         bullets.splice(j, 1);
-                        score += 10;
-                        scoreElement.textContent = score;
+                        if (enemies[i].health <= 0) {
+                            enemies.splice(i, 1);
+                            score += 10;
+                            scoreElement.textContent = score;
+                        }
                         break;
                     }
                 }
@@ -300,6 +319,9 @@
             enemies.forEach(enemy => {
                 ctx.fillStyle = enemy.color;
                 ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                // 绘制敌人的血量
+                ctx.fillStyle = '#fff';
+                ctx.fillText(`${enemy.health}`, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2); // 显示血量在敌人方块内
             });
         }
 

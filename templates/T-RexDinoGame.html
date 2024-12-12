@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Rex Dino Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+        }
+
+        #game {
+            position: relative;
+            width: 600px;
+            height: 200px;
+            overflow: hidden;
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+
+        #trex {
+            position: absolute;
+            bottom: 20px;
+            left: 50px;
+            width: 40px;
+            height: 40px;
+            background-image: url('https://www.pinterest.com/pin/991917886682429633/'); /* T-Rex图像 */
+            background-size: cover;
+        }
+
+        .cactus {
+            position: absolute;
+            bottom: 20px;
+            width: 20px;
+            height: 40px;
+            background-color: #4CAF50; /* Cactus颜色 */
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="trex"></div>
+        <div id="score">Score: 0</div>
+    </div>
+
+    <div id="instructions" style="text-align: center; margin-top: 20px;">
+        <h2>操作说明</h2>
+        <p>按 <strong>空格键</strong> 让小恐龙跳跃，避开飞来的仙人掌！</p>
+        <p>尽量收集分数，看看你能跑多远！</p>
+        <p>祝你好运，勇敢的飞行员！🌟</p>
+    </div>
+
+    <script>
+        const trex = document.getElementById('trex');
+        const game = document.getElementById('game');
+        const scoreDisplay = document.getElementById('score');
+        let score = 0;
+        let isJumping = false;
+        let cactusArray = [];
+        let gameInterval;
+
+        function jump() {
+            if (isJumping) return;
+            isJumping = true;
+            let jumpHeight = 0;
+
+            const jumpInterval = setInterval(() => {
+                if (jumpHeight >= 100) {
+                    clearInterval(jumpInterval);
+                    const fallInterval = setInterval(() => {
+                        if (jumpHeight <= 0) {
+                            clearInterval(fallInterval);
+                            isJumping = false;
+                        } else {
+                            jumpHeight -= 5;
+                            trex.style.bottom = (20 + jumpHeight) + 'px';
+                        }
+                    }, 20);
+                } else {
+                    jumpHeight += 5;
+                    trex.style.bottom = (20 + jumpHeight) + 'px';
+                }
+            }, 20);
+        }
+
+        function createCactus() {
+            const cactus = document.createElement('div');
+            cactus.className = 'cactus';
+            cactus.style.left = '600px'; // 从右侧生成
+            game.appendChild(cactus);
+            cactusArray.push(cactus);
+
+            const moveCactus = setInterval(() => {
+                const cactusPosition = parseInt(cactus.style.left);
+                if (cactusPosition < -20) {
+                    clearInterval(moveCactus);
+                    game.removeChild(cactus);
+                    cactusArray.shift();
+                    score++;
+                    scoreDisplay.textContent = 'Score: ' + score;
+                } else {
+                    cactus.style.left = (cactusPosition - 5) + 'px';
+                }
+
+                // 碰撞检测
+                if (cactusPosition < 90 && cactusPosition > 50 && !isJumping) {
+                    alert('Game Over! Your score: ' + score);
+                    clearInterval(moveCactus);
+                    resetGame();
+                }
+            }, 20);
+        }
+
+        function resetGame() {
+            score = 0;
+            scoreDisplay.textContent = 'Score: 0';
+            cactusArray.forEach(cactus => game.removeChild(cactus));
+            cactusArray = [];
+            clearInterval(gameInterval);
+            gameInterval = setInterval(createCactus, 2000);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.code === 'Space') {
+                jump();
+            }
+        });
+
+        // 启动游戏
+        gameInterval = setInterval(createCactus, 2000);
+    </script>
+</body>
+</html>

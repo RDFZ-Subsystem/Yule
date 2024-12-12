@@ -46,7 +46,13 @@
     <button id="homeButton" onclick="window.location.href='/#games'">Home Page</button>
     <div class="game-info">
         <div class="score">Score: <span id="score">0</span></div>
-        <div class="controls">Use arrows pr WASD to move the snake</div>
+        <div class="controls">Use arrows or WASD to move the snake</div>
+        <label for="difficulty">Select Difficulty:</label>
+        <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
     </div>
 
@@ -54,22 +60,45 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreElement = document.getElementById('score');
+        const difficultySelect = document.getElementById('difficulty');
 
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
         
         let score = 0;
-        let snake = [
-            {x: 10, y: 10}
-        ];
+        let snake = [{ x: 10, y: 10 }];
         let food = {
             x: Math.floor(Math.random() * tileCount),
             y: Math.floor(Math.random() * tileCount)
         };
         let dx = 0;
         let dy = 0;
-        let speed = 7;
+        let speed = 5; // 初始速度
         let gameLoop;
+        let changingDirection = false;
+        let timeElapsed = 0;
+        let speedIncreaseInterval = 5000;
+
+        // 根据选择的难度设置游戏参数
+        function setDifficulty() {
+            const difficulty = difficultySelect.value;
+            switch (difficulty) {
+                case 'easy':
+                    speed = 5;
+                    speedIncreaseInterval = 7000; // 每7秒增加一次速度
+                    break;
+                case 'medium':
+                    speed = 7;
+                    speedIncreaseInterval = 5000; // 每5秒增加一次速度
+                    break;
+                case 'hard':
+                    speed = 10;
+                    speedIncreaseInterval = 3000; // 每3秒增加一次速度
+                    break;
+            }
+            clearInterval(gameLoop);
+            gameLoop = setInterval(game, 1000 / speed);
+        }
 
         // 游戏主循环
         function game() {
@@ -86,7 +115,7 @@
 
         // 更新蛇的位置
         function updateSnake() {
-            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
             snake.unshift(head);
 
             // 检查是否吃到食物
@@ -97,6 +126,7 @@
             } else {
                 snake.pop();
             }
+            changingDirection = false;
         }
 
         // 绘制蛇
@@ -150,7 +180,7 @@
 
         // 重置游戏
         function resetGame() {
-            snake = [{x: 10, y: 10}];
+            snake = [{ x: 10, y: 10 }];
             food = {
                 x: Math.floor(Math.random() * tileCount),
                 y: Math.floor(Math.random() * tileCount)
@@ -159,10 +189,14 @@
             dy = 0;
             score = 0;
             scoreElement.textContent = score;
+            timeElapsed = 0;
+            setDifficulty(); // 根据选择的难度设置游戏参数
         }
 
         // 键盘控制
         document.addEventListener('keydown', (e) => {
+            if (changingDirection) return;
+            changingDirection = true;
             switch(e.key) {
                 case 'ArrowUp':
                 case 'w':
@@ -187,8 +221,22 @@
             }
         });
 
+        // 增加速度的函数
+        function increaseSpeed() {
+            speed += 0.5;
+            clearInterval(gameLoop);
+            gameLoop = setInterval(game, 1000 / speed);
+        }
+
         // 开始游戏循环
-        setInterval(game, 1000/speed);
+        setDifficulty();
+        setInterval(() => {
+            timeElapsed += 1000;
+            if (timeElapsed >= speedIncreaseInterval) {
+                increaseSpeed();
+                timeElapsed = 0;
+            }
+        }, 1000);
     </script>
 </body>
 </html>

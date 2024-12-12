@@ -29,6 +29,12 @@ def TetrisGame():
 @app.route('/TwoPlayersTetrisGame')
 def TwoPlayersTetrisGame():
     return render_template("TwoPlayersTetrisGame.html")
+@app.route('/T-RexDinoGame')
+def T_RexDinoGame():
+    return render_template("T-RexDinoGame.html")
+@app.route('/MinesweeperGame')
+def MinesweeperGame():
+    return render_template("MinesweeperGame.html")
 
 
 if __name__ == '__main__':

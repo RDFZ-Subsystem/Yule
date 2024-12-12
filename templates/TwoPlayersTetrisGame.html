@@ -194,6 +194,32 @@
             padding: 20px;
             box-sizing: border-box;
         }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* 允许点击穿透 */
+            z-index: 1; /* 确保在方块下方 */
+        }
+
+        .grid-line-vertical {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-line-horizontal {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -263,7 +289,7 @@
         </div>
     </div>
 
-    <!-- 游戏结束��� -->
+    <!-- 游戏结束 -->
     <div class="game-over-modal" id="gameOverModal">
         <div class="modal-content">
             <h2 class="modal-title">Game Over!</h2>
@@ -374,7 +400,7 @@
                 const oldCenterX = oldX + Math.floor(oldWidth / 2);
                 const oldCenterY = oldY + Math.floor(oldHeight / 2);
                 
-                // 计算新形状的尺寸
+                // 计算新���状的尺寸
                 const newWidth = newShape[0].length;
                 const newHeight = newShape.length;
                 
@@ -554,7 +580,7 @@
                 const pauseScreen = gameBoard.querySelector('.pause-screen');
                 const gameOverScreen = gameBoard.querySelector('.game-over-screen');
                 const isPauseVisible = pauseScreen ? pauseScreen.style.display === 'flex' : false;
-                const isGameOverVisible = gameOverScreen ? gameOverScreen.style.display === 'flex' : false;
+                const isGameOverVisible = this.isGameOver;  // 使用isGameOver状态
                 
                 // 清空游戏板，但保留暂停和游戏结束屏幕
                 gameBoard.innerHTML = `
@@ -569,6 +595,9 @@
                     </div>
                 `;
 
+                // 添加网格
+                gameBoard.appendChild(this.createGrid());
+
                 // 绘制已固定的方块
                 for (let y = 0; y < BOARD_HEIGHT; y++) {
                     for (let x = 0; x < BOARD_WIDTH; x++) {
@@ -579,7 +608,7 @@
                 }
 
                 // 绘制当前移动的方块
-                if (this.currentShape) {
+                if (this.currentShape && !this.isGameOver) {  // 只在游戏未结束时绘制当前方块
                     for (let y = 0; y < this.currentShape.length; y++) {
                         for (let x = 0; x < this.currentShape[y].length; x++) {
                             if (this.currentShape[y][x]) {
@@ -664,6 +693,29 @@
                         document.querySelector(`#${this.boardId}`).style.opacity = '0.7';
                     }
                 }
+            }
+
+            createGrid() {
+                const gridOverlay = document.createElement('div');
+                gridOverlay.className = 'grid-overlay';
+                
+                // 创建垂直线
+                for (let i = 1; i < BOARD_WIDTH; i++) {
+                    const verticalLine = document.createElement('div');
+                    verticalLine.className = 'grid-line-vertical';
+                    verticalLine.style.left = `${(i * 100) / BOARD_WIDTH}%`;
+                    gridOverlay.appendChild(verticalLine);
+                }
+                
+                // 创建水平线
+                for (let i = 1; i < BOARD_HEIGHT; i++) {
+                    const horizontalLine = document.createElement('div');
+                    horizontalLine.className = 'grid-line-horizontal';
+                    horizontalLine.style.top = `${(i * 100) / BOARD_HEIGHT}%`;
+                    gridOverlay.appendChild(horizontalLine);
+                }
+                
+                return gridOverlay;
             }
         }
 
@@ -798,6 +850,7 @@
                     case 'ArrowDown': game2.moveDown(); break;
                     case 'ArrowUp': game2.rotate(); break;
                     case 'Enter': game2.hardDrop(); break;
+                    case 'y': game2.hardDrop(); break;
                 }
             }
 

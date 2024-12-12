@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        #game {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(10, 30px);
+            gap: 2px;
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: #ddd;
+            border: 1px solid #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .cell.revealed {
+            background-color: #fff;
+        }
+
+        .cell.mine {
+            background-color: red;
+        }
+
+        .cell.flagged {
+            background-color: yellow; /* 标记的颜色 */
+        }
+
+        .cell.highlighted {
+            background-color: #bbb; /* 深色 */
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        #resetButton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minesweeper Game</h1>
+    <div id="game"></div>
+    <div id="message"></div>
+    <button id="resetButton">Restart</button>
+
+    <script>
+        const rows = 10;
+        const cols = 10;
+        const minesCount = 10;
+        let board = [];
+        let revealedCount = 0;
+        let gameOver = false;
+
+        function createBoard() {
+            board = Array.from({ length: rows }, () => Array(cols).fill(0));
+            placeMines();
+            calculateNumbers();
+            renderBoard();
+        }
+
+        function placeMines() {
+            let minesPlaced = 0;
+            while (minesPlaced < minesCount) {
+                const row = Math.floor(Math.random() * rows);
+                const col = Math.floor(Math.random() * cols);
+                if (board[row][col] !== 'M') {
+                    board[row][col] = 'M';
+                    minesPlaced++;
+                }
+            }
+        }
+
+        function calculateNumbers() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (board[r][c] === 'M') {
+                        continue;
+                    }
+                    let minesAround = 0;
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            const newRow = r + i;
+                            const newCol = c + j;
+                            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                                if (board[newRow][newCol] === 'M') {
+                                    minesAround++;
+                                }
+                            }
+                        }
+                    }
+                    board[r][c] = minesAround;
+                }
+            }
+        }
+
+        function renderBoard() {
+            const gameDiv = document.getElementById('game');
+            gameDiv.innerHTML = '';
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.addEventListener('click', handleCellClick);
+                    cell.addEventListener('contextmenu', handleRightClick); // 添加右键点击事件
+                    cell.addEventListener('mousedown', handleMouseDown); // 添加按下事件
+                    cell.addEventListener('mouseup', handleMouseUp); // 添加松开事件
+                    gameDiv.appendChild(cell);
+                }
+            }
+        }
+
+        function handleCellClick(event) {
+            if (gameOver) return;
+            const row = event.target.dataset.row;
+            const col = event.target.dataset.col;
+            revealCell(row, col);
+        }
+
+        function handleRightClick(event) {
+            event.preventDefault(); // 阻止默认右键菜单
+            const row = event.target.dataset.row;
+            const col = event.target.dataset.col;
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+
+            // 仅在未翻开的方块上标记
+            if (!cell.classList.contains('revealed')) {
+                cell.classList.toggle('flagged'); // 切换标记状态
+            }
+        }
+
+        function handleMouseDown(event) {
+            const row = event.target.dataset.row;
+            const col = event.target.dataset.col;
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+
+            // 如果点击的是已翻开的方块，改变周围未翻开的方块颜色
+            let flagCount = 0;
+            if (cell.classList.contains('revealed')) {
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const newRow = parseInt(row) + i;
+                        const newCol = parseInt(col) + j;
+                        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                            const neighborCell = document.querySelector(`.cell[data-row="${newRow}"][data-col="${newCol}"]`);
+                            if (!neighborCell.classList.contains('revealed') && !neighborCell.classList.contains('flagged')) {
+                                neighborCell.classList.add('highlighted'); // 改变颜色
+                            }
+                            else if (neighborCell.classList.contains('flagged')) {
+                                flagCount++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (flagCount === board[row][col]) {
+                // 如果周围的地雷都已标记，揭示周围所有未标记的方块
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        if (!(i === 0 && j === 0) && !cell.classList.contains('flagged')) {
+                            const neighborCell = document.querySelector(`.cell[data-row="${parseInt(row) + i}"][data-col="${parseInt(col) + j}"]`);
+                            neighborCell.classList.remove('highlighted');
+                            revealCell(parseInt(row) + i, parseInt(col) + j);
+                        }
+                    }
+                }
+            }
+        }
+
+        function handleMouseUp(event) {
+            const row = event.target.dataset.row;
+            const col = event.target.dataset.col;
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+
+            // 如果点击的是已翻开的方块，恢复周围未翻开的方块颜色
+            if (cell.classList.contains('revealed')) {
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const newRow = parseInt(row) + i;
+                        const newCol = parseInt(col) + j;
+                        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                            const neighborCell = document.querySelector(`.cell[data-row="${newRow}"][data-col="${newCol}"]`);
+                            if (!neighborCell.classList.contains('revealed')) {
+                                neighborCell.classList.remove('highlighted'); // 恢复颜色
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function revealCell(row, col) {
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            
+            // 检查是否被标记
+            if (cell.classList.contains('flagged')) return;
+
+            if (cell.classList.contains('revealed')) return;
+
+            cell.classList.add('revealed');
+            revealedCount++;
+
+            if (board[row][col] === 'M') {
+                cell.classList.add('mine');
+                gameOver = true;
+                document.getElementById('message').textContent = 'Game Over！You Step On A Mine！';
+                revealAllMines(); // 显示所有地雷
+                return;
+            }
+
+            if (board[row][col] > 0) {
+                cell.textContent = board[row][col];
+            } else {
+                // 如果周围没有地雷，递归揭示相邻的方块
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const newRow = parseInt(row) + i;
+                        const newCol = parseInt(col) + j;
+                        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                            revealCell(newRow, newCol);
+                        }
+                    }
+                }
+            }
+
+            // 检查是否胜利
+            if (revealedCount === rows * cols - minesCount) {
+                document.getElementById('message').textContent = 'Congradulation！You Win！';
+                gameOver = true;
+            }
+        }
+
+        function revealAllMines() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (board[r][c] === 'M') {
+                        const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+                        mineCell.classList.add('mine'); // 显示地雷
+                    }
+                }
+            }
+        }
+
+        document.getElementById('resetButton').addEventListener('click', () => {
+            gameOver = false;
+            revealedCount = 0;
+            document.getElementById('message').textContent = '';
+            createBoard();
+        });
+
+        // 启动游戏
+        createBoard();
+    </script>
+</body>
+</html>
