@@ -65,7 +65,7 @@
     </style>
 </head>
 <body>
-    <button id="homeButton" onclick="window.location.href='/#games'">Home Page</button>
+    <button id="homeButton" onclick="window.location.href='{{ t_home }}'">Home Page</button>
     <div class="game-info">
         <div class="score">Score: <span id="score">0</span></div>
         <div id="healthContainer">
@@ -182,11 +182,11 @@
                 ctx.fillStyle = '#fff';
                 ctx.font = '48px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('游戏结束!', canvas.width/2, canvas.height/2 - 50);
+                ctx.fillText('Game Over!', canvas.width/2, canvas.height/2 - 50);
                 
                 ctx.font = '24px Arial';
-                ctx.fillText(`最终得分: ${score}`, canvas.width/2, canvas.height/2);
-                ctx.fillText('按空格键重新开始', canvas.width/2, canvas.height/2 + 50);
+                ctx.fillText(`Final Score: ${score}`, canvas.width/2, canvas.height/2);
+                ctx.fillText('Press Space to Restart', canvas.width/2, canvas.height/2 + 50);
                 
                 return; // 停止游戏循环
             }

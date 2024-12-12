@@ -220,9 +220,28 @@
             height: 1px;
             background-color: rgba(0, 0, 0, 0.1);
         }
+
+        #homeButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #homeButton:hover {
+            background: #1976D2;
+        }
     </style>
 </head>
 <body>
+    <button id="homeButton" onclick="window.location.href='{{ t_home }}'">Home Page</button>
     <!-- 在game-container前添加状态显示区域 -->
     <div class="game-status" style="text-align: center; margin: 10px 0;">
         <div style="display: flex; justify-content: space-around; width: 100%;">

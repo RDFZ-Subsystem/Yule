@@ -274,9 +274,28 @@
                 height: calc(90vw / 3);
             }
         }
+
+        #homeButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #homeButton:hover {
+            background: #1976D2;
+        }
     </style>
 </head>
 <body>
+    <button id="homeButton" onclick="window.location.href='{{ t_home }}'">Home Page</button>
     <div class="game-header">
         <h1>Tetris</h1>
         <div class="score-container">
