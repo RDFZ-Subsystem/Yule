@@ -35,6 +35,17 @@ def T_RexDinoGame():
 @app.route('/MinesweeperGame')
 def MinesweeperGame():
     return render_template("MinesweeperGame.html", t_home='/#games')
+@app.route('/WordleGame')
+def WordleGame():
+    return render_template("WordleGame.html", t_home='/#games')
+@app.route('/wordlist')
+def get_wordlist():
+    with open('source/wordlist.txt', 'r', encoding='utf-8') as file:
+        return file.read()
+@app.route('/csw22')
+def get_csw22():
+    with open('source/CSW22.txt', 'r', encoding='utf-8') as file:
+        return file.read()
 
 
 if __name__ == '__main__':

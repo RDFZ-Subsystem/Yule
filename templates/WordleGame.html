@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #gameBoard {
+            display: grid;
+            grid-template-rows: repeat(6, 60px);
+            gap: 5px;
+            margin: 20px;
+        }
+
+        .word-row {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 5px;
+        }
+
+        .letter-box {
+            border: 2px solid #ccc;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .correct {
+            background-color: #6aaa64;
+            color: white;
+            border-color: #6aaa64;
+        }
+
+        .present {
+            background-color: #c9b458;
+            color: white;
+            border-color: #c9b458;
+        }
+
+        .absent {
+            background-color: #787c7e;
+            color: white;
+            border-color: #787c7e;
+        }
+
+        #keyboard {
+            display: grid;
+            grid-template-rows: repeat(3, 50px);
+            gap: 5px;
+            margin: 20px;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .key {
+            background-color: #d3d6da;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: bold;
+            padding: 0 15px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .key:hover {
+            background-color: #bbb;
+        }
+
+        #message {
+            font-size: 1.5em;
+            margin: 20px;
+            color: #333;
+        }
+
+        #homeButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #homeButton:hover {
+            background: #1976D2;
+        }
+
+        #restartButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        #restartButton:hover {
+            background: #1976D2;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px;
+        }
+
+        .game-over-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-info {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-button:hover {
+            background-color: #1976D2;
+        }
+
+        /* 添加键盘按键的颜色样式 */
+        .key.correct {
+            background-color: #6aaa64 !important;
+            color: white;
+        }
+
+        .key.present {
+            background-color: #c9b458 !important;
+            color: white;
+        }
+
+        .key.absent {
+            background-color: #787c7e !important;
+            color: white;
+        }
+
+        /* 调整中文显示的样式 */
+        #modalMeaning {
+            font-size: 20px;
+            color: #666;
+            margin: 15px 0;
+            line-height: 1.4;
+            padding: 0 20px;
+        }
+
+        #settingsButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            font-size: 24px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #settingsButton:hover {
+            background: #1976D2;
+        }
+
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .settings-content {
+            background: var(--background-color);
+            padding: 25px;
+            border-radius: 10px;
+            min-width: 300px;
+            color: var(--text-color);
+        }
+
+        .settings-section {
+            margin: 15px 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .length-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .difficulty-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: var(--button-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+            max-width: 80px;
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .theme-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: var(--button-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .theme-button.active {
+            background: #4CAF50;
+        }
+
+        /* 添加主题相关的CSS变量 */
+        :root {
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --button-color: #2196F3;
+            --keyboard-color: #d3d6da;
+            --border-color: #ccc;
+            --letter-box-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --correct-color: #6aaa64;
+            --present-color: #c9b458;
+            --absent-color: #787c7e;
+        }
+
+        /* 暗色主题 */
+        [data-theme="dark"] {
+            --background-color: #121213;
+            --text-color: #ffffff;
+            --button-color: #3b3b3c;
+            --keyboard-color: #818384;
+            --border-color: #3a3a3c;
+            --letter-box-bg: #121213;
+            --modal-bg: #121213;
+            --correct-color: #538d4e;
+            --present-color: #b59f3b;
+            --absent-color: #565758;
+        }
+
+        /* 更新现有元素以使用CSS变量 */
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .letter-box {
+            border: 2px solid var(--border-color);
+            background-color: var(--letter-box-bg);
+            color: var(--text-color);
+        }
+
+        .key {
+            background-color: var(--keyboard-color);
+            color: var(--text-color);
+        }
+
+        #helpButton {
+            position: fixed;
+            top: 20px;
+            right: 70px;  /* 位于齿轮按钮左侧 */
+            padding: 10px;
+            font-size: 24px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #helpButton:hover {
+            background: #1976D2;
+        }
+
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .help-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .help-content h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .help-content ul {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .help-content li {
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .example-section {
+            margin: 20px 0;
+        }
+
+        .example {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .example .letter-box {
+            width: 40px;
+            height: 40px;
+            font-size: 1.5em;
+        }
+
+        .click-to-continue {
+            text-align: center;
+            color: #666;
+            margin-top: 30px;
+            font-style: italic;
+        }
+
+        /* 更新颜色状态类 */
+        .correct {
+            background-color: var(--correct-color) !important;
+            color: white;
+            border-color: var(--correct-color);
+        }
+
+        .present {
+            background-color: var(--present-color) !important;
+            color: white;
+            border-color: var(--present-color);
+        }
+
+        .absent {
+            background-color: var(--absent-color) !important;
+            color: white;
+            border-color: var(--absent-color);
+        }
+
+        /* 更新键盘按键的颜色状态 */
+        .key.correct {
+            background-color: var(--correct-color) !important;
+            color: white;
+        }
+
+        .key.present {
+            background-color: var(--present-color) !important;
+            color: white;
+        }
+
+        .key.absent {
+            background-color: var(--absent-color) !important;
+            color: white;
+        }
+
+        /* 更新模态框样式 */
+        .modal-content {
+            background-color: var(--modal-bg);
+            color: var(--text-color);
+        }
+
+        .modal-title {
+            color: var(--text-color);
+        }
+
+        .modal-info {
+            color: var(--text-color);
+        }
+
+        /* 添加提示消息的样式 */
+        #invalidWordMessage {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 3000;
+        }
+
+        #invalidWordMessage.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <button id="homeButton" onclick="window.location.href='{{ t_home }}'">Home Page</button>
+    <h1>Wordle Game</h1>
+    <div class="controls">
+        <button id="restartButton" onclick="restartGame()">Restart Game</button>
+    </div>
+    <div id="message"></div>
+    <div id="gameBoard"></div>
+    <div id="keyboard">
+        <div class="keyboard-row">
+            <button class="key">q</button><button class="key">w</button><button class="key">e</button>
+            <button class="key">r</button><button class="key">t</button><button class="key">y</button>
+            <button class="key">u</button><button class="key">i</button><button class="key">o</button>
+            <button class="key">p</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">a</button><button class="key">s</button><button class="key">d</button>
+            <button class="key">f</button><button class="key">g</button><button class="key">h</button>
+            <button class="key">j</button><button class="key">k</button><button class="key">l</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">Enter</button>
+            <button class="key">z</button><button class="key">x</button><button class="key">c</button>
+            <button class="key">v</button><button class="key">b</button><button class="key">n</button>
+            <button class="key">m</button>
+            <button class="key">⌫</button>
+        </div>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">Game Over!</h2>
+            <div class="modal-info" id="modalInfo"></div>
+            <div class="modal-info" id="modalWord"></div>
+            <div class="modal-info" id="modalMeaning"></div>
+            <div class="modal-info" id="modalAttempts"></div>
+            <button class="modal-button" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <button id="settingsButton">⚙️</button>
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-title">Settings</div>
+            <div class="settings-section">
+                <div class="section-title">Word Length</div>
+                <div class="length-buttons">
+                    <button class="difficulty-button" data-length="4">4</button>
+                    <button class="difficulty-button" data-length="5">5</button>
+                    <button class="difficulty-button" data-length="6">6</button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <div class="section-title">Theme</div>
+                <div class="theme-toggle">
+                    <button class="theme-button" data-theme="light">
+                        ☀️ Light
+                    </button>
+                    <button class="theme-button" data-theme="dark">
+                        🌙 Dark
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="helpButton">❓</button>
+    <div class="help-modal" id="helpModal">
+        <div class="help-content">
+            <h2>How to Play</h2>
+            <ul>
+                <li>Guess the word in 6 tries.</li>
+                <li>Each guess must be a valid word.</li>
+                <li>After each guess, the color of the tiles will change to show how close your guess was:</li>
+            </ul>
+            <div class="example-section">
+                <div class="example">
+                    <div class="letter-box correct">G</div> - Green: The letter is correct and in the right spot.
+                </div>
+                <div class="example">
+                    <div class="letter-box present">Y</div> - Yellow: The letter is in the word but in the wrong spot.
+                </div>
+                <div class="example">
+                    <div class="letter-box absent">X</div> - Gray: The letter is not in the word.
+                </div>
+            </div>
+            <p class="click-to-continue">Click anywhere to continue</p>
+        </div>
+    </div>
+
+    <div id="invalidWordMessage">Word not found</div>
+
+    <script>
+        // 为不同长度的单词创建单独的词典
+        const wordDicts = {
+            4: {},
+            5: {},
+            6: {}
+        };
+        let wordLength = 5; // 默认单词长度
+        
+        // 添加CSW19词典（这里只是一个示例，实际需要完整的词典）
+        const validWords = new Set([
+            "ABOUT", "ABOVE", "ABUSE", "ACTOR", "ACUTE", "ADAPT", "ADMIT", "ADOPT", "ADULT", "AFTER",
+            // ... 需要添加更多有效单词
+        ]);
+
+        // 修改加载词典的逻辑，只使用wordlist
+        fetch('/wordlist')
+            .then(response => response.text())
+            .then(text => {
+                processWordList(text);
+                
+                // 输出每个长度的单词数量
+                for (let length in wordDicts) {
+                    console.log(`${length}-letter words: ${Object.keys(wordDicts[length]).length}`);
+                }
+                
+                initializeGame();
+            })
+            .catch(error => {
+                console.error('Error loading word list:', error);
+            });
+
+        // 简化processWordList函数，移除isExplained参数
+        function processWordList(text) {
+            const lines = text.split('\n');
+            lines.forEach(line => {
+                if (line.trim() === '') return;
+                
+                const parts = line.split(' ');
+                const word = parts[0].toUpperCase();
+                const meaningStart = line.indexOf(' ');
+                if (meaningStart !== -1 && /^[A-Za-z]+$/.test(word) && 
+                    word.length >= 4 && word.length <= 6) {
+                    const meaning = line.substring(meaningStart + 1).trim();
+                    if (!wordDicts[word.length].hasOwnProperty(word)) {
+                        wordDicts[word.length][word] = meaning;
+                    }
+                }
+            });
+        }
+
+        // 修改初始化游戏函数以使用当前长度的词典
+        function initializeGame() {
+            const currentDict = wordDicts[wordLength];
+            const words = Object.keys(currentDict);
+            if (words.length > 0) {
+                targetWord = words[Math.floor(Math.random() * words.length)];
+                currentRow = 0;
+                currentTile = 0;
+                isGameOver = false;
+                console.log(`Using ${wordLength}-letter words dictionary with ${words.length} words`);
+            } else {
+                console.error(`No ${wordLength}-letter words available`);
+            }
+        }
+
+        // 修改changeWordLength函数
+        function changeWordLength(length) {
+            if (wordDicts[length] && Object.keys(wordDicts[length]).length > 0) {
+                wordLength = length;
+                updateGameBoard();
+                restartGame();
+                hideSettings();
+            } else {
+                alert(`No ${length}-letter words available in the dictionary`);
+            }
+        }
+
+        // 修改showGameOver函数以使用当前长度的词典
+        function showGameOver(won) {
+            const modal = document.getElementById('gameOverModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalInfo = document.getElementById('modalInfo');
+            const modalWord = document.getElementById('modalWord');
+            const modalMeaning = document.getElementById('modalMeaning');
+            const modalAttempts = document.getElementById('modalAttempts');
+
+            if (won) {
+                modalTitle.textContent = 'Congratulations!';
+                modalInfo.textContent = 'You won!';
+            } else {
+                modalTitle.textContent = 'Game Over';
+                modalInfo.textContent = 'Better luck next time!';
+            }
+
+            modalWord.textContent = `The word was: ${targetWord}`;
+            modalMeaning.textContent = `Meaning: ${wordDicts[wordLength][targetWord]}`;
+            modalAttempts.textContent = `Attempts: ${currentRow + 1}/6`;
+            
+            modal.style.display = 'flex';
+        }
+
+        // 创建游戏板
+        const gameBoard = document.getElementById('gameBoard');
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement('div');
+            row.className = 'word-row';
+            for (let j = 0; j < 5; j++) {
+                const box = document.createElement('div');
+                box.className = 'letter-box';
+                row.appendChild(box);
+            }
+            gameBoard.appendChild(row);
+        }
+
+        // 键盘事件处理
+        document.addEventListener('keydown', handleKeyPress);
+        document.querySelectorAll('.key').forEach(key => {
+            key.addEventListener('click', () => {
+                const letter = key.textContent;
+                if (letter === '⌫') {
+                    deleteLetter();
+                } else if (letter === 'Enter') {
+                    checkWord();
+                } else {
+                    addLetter(letter);
+                }
+            });
+        });
+
+        function handleKeyPress(e) {
+            if (isGameOver) return;
+
+            if (e.key === 'Enter') {
+                checkWord();
+            } else if (e.key === 'Backspace') {
+                deleteLetter();
+            } else if (e.key.match(/^[a-zA-Z]$/)) {
+                addLetter(e.key);
+            }
+        }
+
+        function addLetter(letter) {
+            if (currentTile < wordLength && currentRow < 6) {
+                const row = gameBoard.children[currentRow];
+                const box = row.children[currentTile];
+                box.textContent = letter.toUpperCase();
+                currentTile++;
+            }
+        }
+
+        function deleteLetter() {
+            if (currentTile > 0) {
+                currentTile--;
+                const row = gameBoard.children[currentRow];
+                const box = row.children[currentTile];
+                box.textContent = '';
+            }
+        }
+
+        function checkWord() {
+            if (currentTile !== wordLength) return;
+
+            const row = gameBoard.children[currentRow];
+            let guessWord = '';
+            
+            // 获取当前猜测的单词
+            for (let i = 0; i < wordLength; i++) {
+                guessWord += row.children[i].textContent;
+            }
+
+            // 检查单词是否有效
+            if (!isValidWord(guessWord)) {
+                showInvalidWordMessage();
+                return;
+            }
+
+            const letterCount = {};
+            
+            // 统计目标单词中每个字母的出现次数
+            for (let letter of targetWord) {
+                letterCount[letter] = (letterCount[letter] || 0) + 1;
+            }
+
+            // 首先检查完全匹配的字母
+            for (let i = 0; i < wordLength; i++) {
+                const box = row.children[i];
+                const letter = box.textContent;
+
+                if (letter === targetWord[i]) {
+                    box.classList.add('correct');
+                    // 更新键盘按键颜色为绿色
+                    updateKeyboardColor(letter, 'correct');
+                    letterCount[letter]--;
+                }
+            }
+
+            // 然后检查位置错误的字母
+            for (let i = 0; i < wordLength; i++) {
+                const box = row.children[i];
+                const letter = box.textContent;
+
+                if (!box.classList.contains('correct')) {
+                    if (letterCount[letter] > 0) {
+                        box.classList.add('present');
+                        // 更新键盘按键颜色为黄色（如果该按键还不是绿色）
+                        updateKeyboardColor(letter, 'present');
+                        letterCount[letter]--;
+                    } else {
+                        box.classList.add('absent');
+                        // 更新键盘按键颜色为灰色（如果该按键还没有其他颜色）
+                        updateKeyboardColor(letter, 'absent');
+                    }
+                }
+            }
+
+            if (guessWord === targetWord) {
+                showGameOver(true);
+                isGameOver = true;
+                return;
+            }
+
+            if (currentRow === 6 - 1) {
+                showGameOver(false);
+                isGameOver = true;
+                return;
+            }
+
+            currentRow++;
+            currentTile = 0;
+        }
+
+        // 添加更新键盘颜色的函数
+        function updateKeyboardColor(letter, status) {
+            const key = document.querySelector(`.key:not(.Enter):not(.⌫):not([style*="background-color"])`);
+            const keyButton = Array.from(document.querySelectorAll('.key')).find(k => k.textContent.toLowerCase() === letter.toLowerCase());
+            
+            if (keyButton) {
+                // 如果按键已经是绿色，不要改变它的颜色
+                if (keyButton.classList.contains('correct')) {
+                    return;
+                }
+                
+                // 如果按键是黄色且新状态是灰色，不要改变它的颜色
+                if (keyButton.classList.contains('present') && status === 'absent') {
+                    return;
+                }
+
+                // 移除所有可能的颜色类
+                keyButton.classList.remove('correct', 'present', 'absent');
+                // 添加新的颜色类
+                keyButton.classList.add(status);
+            }
+        }
+
+        // 修改重启游戏函数，添加重置键盘颜色的功能
+        function restartGame() {
+            // 隐藏模态框
+            document.getElementById('gameOverModal').style.display = 'none';
+            
+            // 重置游戏状态
+            initializeGame()
+            
+            // 清空消息
+            document.getElementById('message').textContent = '';
+            
+            // 重置游戏板
+            const rows = gameBoard.children;
+            for (let i = 0; i < rows.length; i++) {
+                const boxes = rows[i].children;
+                for (let j = 0; j < boxes.length; j++) {
+                    const box = boxes[j];
+                    box.textContent = '';
+                    box.className = 'letter-box';
+                }
+            }
+            
+            // 重置键盘颜色
+            document.querySelectorAll('.key').forEach(key => {
+                key.classList.remove('correct', 'present', 'absent');
+            });
+        }
+
+        // 添加设置相关的函数
+        function showSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+
+        function hideSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function updateGameBoard() {
+            // 更新游戏板的列数
+            const rows = document.querySelectorAll('.word-row');
+            rows.forEach(row => {
+                row.innerHTML = '';
+                row.style.gridTemplateColumns = `repeat(${wordLength}, 60px)`;
+                for (let j = 0; j < wordLength; j++) {
+                    const box = document.createElement('div');
+                    box.className = 'letter-box';
+                    row.appendChild(box);
+                }
+            });
+        }
+
+        // 添加事件监听器
+        document.getElementById('settingsButton').addEventListener('click', showSettings);
+
+        document.getElementById('settingsModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('settingsModal')) {
+                hideSettings();
+            }
+        });
+
+        document.querySelectorAll('.difficulty-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const newLength = parseInt(button.dataset.length);
+                changeWordLength(newLength);
+            });
+        });
+
+        // 添加帮助相关的函数
+        function showHelp() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+
+        function hideHelp() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
+        // 添加事件监听器
+        document.getElementById('helpButton').addEventListener('click', showHelp);
+        document.getElementById('helpModal').addEventListener('click', hideHelp);
+
+        // 添加主题切换功能
+        let currentTheme = 'light';
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            // 更新按钮状态
+            document.querySelectorAll('.theme-button').forEach(button => {
+                button.classList.toggle('active', button.dataset.theme === theme);
+            });
+        }
+
+        // 初始化主题
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+
+        // 添加主题切换事件监听器
+        document.querySelectorAll('.theme-button').forEach(button => {
+            button.addEventListener('click', () => {
+                setTheme(button.dataset.theme);
+            });
+        });
+
+        // 添加单词有效性检查函数
+        function isValidWord(word) {
+            // 检查是否在当前长度的词典中
+            return wordDicts[wordLength].hasOwnProperty(word) || validWords.has(word);
+        }
+
+        // 添加显示无效单词消息的函数
+        function showInvalidWordMessage() {
+            const message = document.getElementById('invalidWordMessage');
+            message.classList.add('show');
+            
+            // 2秒后自动隐藏消息
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 2000);
+        }
+
+        // 修改加载词典的函数名和路由
+        function loadCSW22Dictionary() {
+            fetch('/csw22')  // 修改路由为csw22
+                .then(response => response.text())
+                .then(text => {
+                    text.split('\n').forEach(word => {
+                        word = word.trim().toUpperCase();
+                        if (word.length >= 4 && word.length <= 6) {
+                            validWords.add(word);
+                        }
+                    });
+                    console.log('CSW22 dictionary loaded');
+                })
+                .catch(error => {
+                    console.error('Error loading CSW22 dictionary:', error);
+                });
+        }
+
+        // 修改初始化调用
+        loadCSW22Dictionary();  // 更新函数调用
+    </script>
+</body>
+</html>

@@ -40,6 +40,54 @@
         #homeButton:hover {
             background: #1976D2;
         }
+
+        .game-over-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-score {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-button:hover {
+            background-color: #1976D2;
+        }
     </style>
 </head>
 <body>
@@ -55,6 +103,16 @@
         </select>
         <button id="applyDifficulty">Apply Difficulty</button>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Game Over!</h2>
+            <div class="modal-score">
+                Final Score: <span id="finalScore">0</span>
+            </div>
+            <button class="modal-button" onclick="resetGame()">Try Again</button>
+        </div>
     </div>
 
     <script>
@@ -81,31 +139,29 @@
         let changingDifficulty = false;
         let timeElapsed = 0;
         let speedIncreaseInterval = 5000;
+        let difficulty = 'easy';
 
         // 根据选择的难度设置游戏参数
         function setDifficulty() {
             if (changingDifficulty) return;
-            const difficulty = difficultySelect.value;
-            switch (difficulty) {
+            const dif = difficultySelect.value;
+            difficulty = dif;
+            switch (dif) {
                 case 'easy':
-                    initialSpeed = 5;
                     speedIncreaseInterval = 7000; // 每7秒增加一次速度
                     break;
                 case 'medium':
-                    initialSpeed = 7;
                     speedIncreaseInterval = 5000; // 每5秒增加一次速度
                     break;
                 case 'hard':
-                    initialSpeed = 10;
                     speedIncreaseInterval = 3000; // 每3秒增加一次速度
                     break;
             }
-            clearInterval(gameLoop);
-            gameLoop = setInterval(game, 1000 / speed);
             changingDifficulty = true;
         }
 
         function setInitialSpeed() {
+            const difficulty = difficultySelect.value;
             switch (difficulty) {
                 case 'easy':
                     speed = initialSpeed[0];
@@ -123,8 +179,6 @@
         function game() {
             updateSnake();
             if (checkGameOver()) {
-                alert('Game Over！your score：' + score);
-                resetGame();
                 return;
             }
             clearCanvas();
@@ -186,20 +240,32 @@
             // 撞墙
             if (snake[0].x < 0 || snake[0].x >= tileCount || 
                 snake[0].y < 0 || snake[0].y >= tileCount) {
+                showGameOver();
                 return true;
             }
 
             // 撞到自己
             for (let i = 1; i < snake.length; i++) {
                 if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+                    showGameOver();
                     return true;
                 }
             }
             return false;
         }
 
+        // 添加显示游戏结束模态框的函数
+        function showGameOver() {
+            const gameOverModal = document.getElementById('gameOverModal');
+            const finalScore = document.getElementById('finalScore');
+            finalScore.textContent = score;
+            gameOverModal.style.display = 'flex';
+        }
+
         // 重置游戏
         function resetGame() {
+            const gameOverModal = document.getElementById('gameOverModal');
+            gameOverModal.style.display = 'none';
             snake = [{ x: 10, y: 10 }];
             food = {
                 x: Math.floor(Math.random() * tileCount),
@@ -210,8 +276,10 @@
             score = 0;
             scoreElement.textContent = score;
             timeElapsed = 0;
-            setDifficulty(); // 根据选择的难度设置游戏参数
+            setDifficulty();
             setInitialSpeed();
+            clearInterval(gameLoop);
+            gameLoop = setInterval(game, 1000 / speed);
         }
 
         // 键盘控制
@@ -239,11 +307,15 @@
                 case 'D':
                     if (dx !== -1) { dx = 1; dy = 0; }
                     break;
+                case 'p':
+                    setDifficulty();
+                    clearInterval(gameLoop);
+        gameLoop = setInterval(game, 1000 / speed);
+                    break;
             }
         });
 
         document.getElementById('applyDifficulty').addEventListener('click', setDifficulty);
-        document.addEventListener('keydown', setDifficulty);
 
         // 增加速度的函数
         function increaseSpeed() {
@@ -253,8 +325,10 @@
         }
 
         // 开始游戏循环
-        setDifficulty();
         setInitialSpeed();
+        setDifficulty();
+        clearInterval(gameLoop);
+        gameLoop = setInterval(game, 1000 / speed);
         setInterval(() => {
             timeElapsed += 1000;
             if (timeElapsed >= speedIncreaseInterval) {

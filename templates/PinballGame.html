@@ -255,7 +255,7 @@
         // 移动物体
         function movePaddle() {
             paddle.x += paddle.dx;
-            if (autoModes === 1 && ball.x - paddle.x != paddle.width/2) {paddle.x = ball.x - paddle.width/2}
+            if (autoModes === 1) {paddle.x = ball.x - paddle.width/2}
 
             // 防止板子超出画布
             if (paddle.x < 0) {
