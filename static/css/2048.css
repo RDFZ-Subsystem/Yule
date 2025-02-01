@@ -1,0 +1,80 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #faf8ef;
+    font-family: Arial, sans-serif;
+}
+
+.game-container {
+    text-align: center;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 400px;
+    margin: 20px 0;
+}
+
+.score-container {
+    background: #bbada0;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: white;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    background: #bbada0;
+    padding: 10px;
+    border-radius: 6px;
+    width: 400px;
+    height: 400px;
+}
+
+.cell {
+    background: rgba(238, 228, 218, 0.35);
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    font-weight: bold;
+    color: #776e65;
+    width: 87.5px;
+    height: 87.5px;
+}
+
+.tile-2 { background: #eee4da; width: 87.5px; height: 87.5px; }
+.tile-4 { background: #ede0c8; width: 87.5px; height: 87.5px; }
+.tile-8 { background: #f2b179; color: #f9f6f2; width: 87.5px; height: 87.5px; }
+.tile-16 { background: #f59563; color: #f9f6f2; width: 87.5px; height: 87.5px; }
+.tile-32 { background: #f67c5f; color: #f9f6f2; width: 87.5px; height: 87.5px; }
+.tile-64 { background: #f65e3b; color: #f9f6f2; width: 87.5px; height: 87.5px; }
+.tile-128 { background: #edcf72; color: #f9f6f2; font-size: 30px;width: 87.5px; height: 87.5px; }
+.tile-256 { background: #edcc61; color: #f9f6f2; font-size: 30px;width: 87.5px; height: 87.5px; }
+.tile-512 { background: #edc850; color: #f9f6f2; font-size: 30px;width: 87.5px; height: 87.5px; }
+.tile-1024 { background: #edc53f; color: #f9f6f2; font-size: 25px;width: 87.5px; height: 87.5px; }
+.tile-2048 { background: #edc22e; color: #f9f6f2; font-size: 25px;width: 87.5px; height: 87.5px; }
+
+#homeButton {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#homeButton:hover {
+    background: #1976D2;
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/wordle.css') }}">
+</head>
+<body>
+    <button id="homeButton" onclick="window.location.href='{{ t_home }}'">Home Page</button>
+    <h1>Wordle Game</h1>
+    <div class="controls">
+        <button id="restartButton" onclick="restartGame()">Restart Game</button>
+    </div>
+    <div id="message"></div>
+    <div id="gameBoard"></div>
+    <div id="keyboard">
+        <div class="keyboard-row">
+            <button class="key">q</button><button class="key">w</button><button class="key">e</button>
+            <button class="key">r</button><button class="key">t</button><button class="key">y</button>
+            <button class="key">u</button><button class="key">i</button><button class="key">o</button>
+            <button class="key">p</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">a</button><button class="key">s</button><button class="key">d</button>
+            <button class="key">f</button><button class="key">g</button><button class="key">h</button>
+            <button class="key">j</button><button class="key">k</button><button class="key">l</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">Enter</button>
+            <button class="key">z</button><button class="key">x</button><button class="key">c</button>
+            <button class="key">v</button><button class="key">b</button><button class="key">n</button>
+            <button class="key">m</button>
+            <button class="key">⌫</button>
+        </div>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">Game Over!</h2>
+            <div class="modal-info" id="modalInfo"></div>
+            <div class="modal-info" id="modalWord"></div>
+            <div class="modal-info" id="modalMeaning"></div>
+            <div class="modal-info" id="modalAttempts"></div>
+            <button class="modal-button" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <button id="settingsButton">⚙️</button>
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-title">Settings</div>
+            <div class="settings-section">
+                <div class="section-title">Word Length</div>
+                <div class="length-buttons">
+                    <button class="difficulty-button" data-length="4">4</button>
+                    <button class="difficulty-button" data-length="5">5</button>
+                    <button class="difficulty-button" data-length="6">6</button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <div class="section-title">Theme</div>
+                <div class="theme-toggle">
+                    <button class="theme-button" data-theme="light">
+                        ☀️ Light
+                    </button>
+                    <button class="theme-button" data-theme="dark">
+                        🌙 Dark
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="helpButton">❓</button>
+    <div class="help-modal" id="helpModal">
+        <div class="help-content">
+            <h2>How to Play</h2>
+            <ul>
+                <li>Guess the word in 6 tries.</li>
+                <li>Each guess must be a valid word.</li>
+                <li>After each guess, the color of the tiles will change to show how close your guess was:</li>
+            </ul>
+            <div class="example-section">
+                <div class="example">
+                    <div class="letter-box correct">G</div> - Green: The letter is correct and in the right spot.
+                </div>
+                <div class="example">
+                    <div class="letter-box present">Y</div> - Yellow: The letter is in the word but in the wrong spot.
+                </div>
+                <div class="example">
+                    <div class="letter-box absent">X</div> - Gray: The letter is not in the word.
+                </div>
+            </div>
+            <p class="click-to-continue">Click anywhere to continue</p>
+        </div>
+    </div>
+
+    <div id="invalidWordMessage">Word not found</div>
+
+    <script src="{{ url_for('static', filename='js/wordle.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+#gameBoard {
+    display: grid;
+    grid-template-rows: repeat(6, 60px);
+    gap: 5px;
+    margin: 20px;
+}
+
+.word-row {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    gap: 5px;
+}
+
+.letter-box {
+    border: 2px solid #ccc;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.correct {
+    background-color: #6aaa64;
+    color: white;
+    border-color: #6aaa64;
+}
+
+.present {
+    background-color: #c9b458;
+    color: white;
+    border-color: #c9b458;
+}
+
+.absent {
+    background-color: #787c7e;
+    color: white;
+    border-color: #787c7e;
+}
+
+#keyboard {
+    display: grid;
+    grid-template-rows: repeat(3, 50px);
+    gap: 5px;
+    margin: 20px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.key {
+    background-color: #d3d6da;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 0 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.key:hover {
+    background-color: #bbb;
+}
+
+#message {
+    font-size: 1.5em;
+    margin: 20px;
+    color: #333;
+}
+
+#homeButton {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#homeButton:hover {
+    background: #1976D2;
+}
+
+#restartButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+#restartButton:hover {
+    background: #1976D2;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin: 10px;
+}
+
+.game-over-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-title {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.modal-info {
+    font-size: 24px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.modal-button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-button:hover {
+    background-color: #1976D2;
+}
+
+/* 添加键盘按键的颜色样式 */
+.key.correct {
+    background-color: #6aaa64 !important;
+    color: white;
+}
+
+.key.present {
+    background-color: #c9b458 !important;
+    color: white;
+}
+
+.key.absent {
+    background-color: #787c7e !important;
+    color: white;
+}
+
+/* 调整中文显示的样式 */
+#modalMeaning {
+    font-size: 20px;
+    color: #666;
+    margin: 15px 0;
+    line-height: 1.4;
+    padding: 0 20px;
+}
+
+#settingsButton {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px;
+    font-size: 24px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#settingsButton:hover {
+    background: #1976D2;
+}
+
+.settings-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.settings-content {
+    background: var(--background-color);
+    padding: 25px;
+    border-radius: 10px;
+    min-width: 300px;
+    color: var(--text-color);
+}
+
+.settings-section {
+    margin: 15px 0;
+}
+
+.section-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.length-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.difficulty-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: var(--button-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+    max-width: 80px;
+}
+
+.theme-toggle {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.theme-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: var(--button-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.theme-button.active {
+    background: #4CAF50;
+}
+
+/* 添加主题相关的CSS变量 */
+:root {
+    --background-color: #ffffff;
+    --text-color: #333333;
+    --button-color: #2196F3;
+    --keyboard-color: #d3d6da;
+    --border-color: #ccc;
+    --letter-box-bg: #ffffff;
+    --modal-bg: #ffffff;
+    --correct-color: #6aaa64;
+    --present-color: #c9b458;
+    --absent-color: #787c7e;
+}
+
+/* 暗色主题 */
+[data-theme="dark"] {
+    --background-color: #121213;
+    --text-color: #ffffff;
+    --button-color: #3b3b3c;
+    --keyboard-color: #818384;
+    --border-color: #3a3a3c;
+    --letter-box-bg: #121213;
+    --modal-bg: #121213;
+    --correct-color: #538d4e;
+    --present-color: #b59f3b;
+    --absent-color: #565758;
+}
+
+/* 更新现有元素以使用CSS变量 */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.letter-box {
+    border: 2px solid var(--border-color);
+    background-color: var(--letter-box-bg);
+    color: var(--text-color);
+}
+
+.key {
+    background-color: var(--keyboard-color);
+    color: var(--text-color);
+}
+
+#helpButton {
+    position: fixed;
+    top: 20px;
+    right: 70px;  /* 位于齿轮按钮左侧 */
+    padding: 10px;
+    font-size: 24px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#helpButton:hover {
+    background: #1976D2;
+}
+
+.help-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.help-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 500px;
+    text-align: left;
+}
+
+.help-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.help-content ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.help-content li {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.example-section {
+    margin: 20px 0;
+}
+
+.example {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.example .letter-box {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5em;
+}
+
+.click-to-continue {
+    text-align: center;
+    color: #666;
+    margin-top: 30px;
+    font-style: italic;
+}
+
+/* 更新颜色状态类 */
+.correct {
+    background-color: var(--correct-color) !important;
+    color: white;
+    border-color: var(--correct-color);
+}
+
+.present {
+    background-color: var(--present-color) !important;
+    color: white;
+    border-color: var(--present-color);
+}
+
+.absent {
+    background-color: var(--absent-color) !important;
+    color: white;
+    border-color: var(--absent-color);
+}
+
+/* 更新键盘按键的颜色状态 */
+.key.correct {
+    background-color: var(--correct-color) !important;
+    color: white;
+}
+
+.key.present {
+    background-color: var(--present-color) !important;
+    color: white;
+}
+
+.key.absent {
+    background-color: var(--absent-color) !important;
+    color: white;
+}
+
+/* 更新模态框样式 */
+.modal-content {
+    background-color: var(--modal-bg);
+    color: var(--text-color);
+}
+
+.modal-title {
+    color: var(--text-color);
+}
+
+.modal-info {
+    color: var(--text-color);
+}
+
+/* 添加提示消息的样式 */
+#invalidWordMessage {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 3000;
+}
+
+#invalidWordMessage.show {
+    opacity: 1;
+}
