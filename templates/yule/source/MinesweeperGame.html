@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/minesweeper.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/yule/minesweeper.css') }}">
+    <link href="{{ url_for('static', filename='css/white_theme.css') }}" rel="stylesheet">
+    {% if t_theme == 'black' %}
+    <link href="{{ url_for('static', filename='css/black_theme.css') }}" rel="stylesheet">
+    {% endif %}
 </head>
 <body>
+    <div class="title">
+        Yule - Subsystem
+        <a href="/"> Home </a>
+        |
+        <a href="/reciter"> Reciter </a>
+        |
+        <a href="/forum"> Forum </a>
+        |
+        <a href="/yule"> Yule </a>
+        |
+        <a href="/userlist"> Users </a>
+        |
+        {% if t_username == None %}
+            <a href="/login"> Login </a>
+        {% endif %}
+        {% if t_username != None %}
+            <a href="/login"> Switch Account </a>
+        |
+            <a href="/profile?username={{ t_username }}"> {{ t_username }} </a>
+        {% endif %}
+        <br>
+    </div>
     <button id="homeButton" onclick="window.location.href='{{ t_home }}'">Home Page</button>
     <div class="game-header">
         <div class="counter">Mines Left: <span id="minesLeft">230</span></div>
@@ -63,6 +89,6 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/minesweeper.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascript/yule/minesweeper.js') }}"></script>
 </body>
 </html>

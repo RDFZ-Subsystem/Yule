@@ -1,0 +1,20 @@
+body, input, textarea, select {
+    background-color: rgb(29, 29, 29);
+    color: rgb(235, 235, 235);
+}
+
+th {
+    border: 1px solid rgb(235, 235, 235);
+}
+
+td {
+    border: 1px solid rgb(235, 235, 235);
+}
+
+a {
+    color: aqua;
+}
+
+.error {
+    color: red;
+}

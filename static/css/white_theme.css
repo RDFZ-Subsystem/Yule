@@ -1,0 +1,81 @@
+body {
+    font-size: 20px;
+    margin: 30px;
+}
+
+input {
+    font-size: 20px;
+    margin: 20px;
+}
+
+button {
+    font-size: 20px;
+    margin: 20px;
+}
+
+textarea {
+    width: 500px;
+    height: 100px;
+    margin: 20px;
+    font-size: 20px;
+}
+
+select {
+    font-size: 20px;
+    margin: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: dodgerblue;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+}
+
+th {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid;
+}
+
+td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid;
+}
+
+.title {
+    text-align: center;
+    text-align: fixed;
+}
+
+.contents_center {
+    text-align: center;
+}
+
+.sentence {
+    width: 40vw;
+    margin: 0 auto;
+}
+
+.passage {
+    width: 1000px;
+    height: 500px;
+}
+
+.copy {
+    text-align: right;
+}
+
+.text_show {
+    width: 70vw;
+    margin: auto auto;
+}
+
+.error {
+    color: red;
+}
