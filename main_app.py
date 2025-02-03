@@ -40,11 +40,11 @@ def WordleGame():
     return render_template("yule/source/WordleGame.html", t_home='/#games')
 @app.route('/yulewordlist')
 def get_wordlist():
-    with open('source/wordlist.txt', 'r', encoding='utf-8') as file:
+    with open('static/source/wordlist.txt', 'r', encoding='utf-8') as file:
         return file.read()
 @app.route('/yulecsw22')
 def get_csw22():
-    with open('source/CSW22.txt', 'r', encoding='utf-8') as file:
+    with open('static/source/CSW22.txt', 'r', encoding='utf-8') as file:
         return file.read()
 
 
