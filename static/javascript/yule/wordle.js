@@ -13,7 +13,7 @@ const validWords = new Set([
 ]);
 
 // 修改加载词典的逻辑，只使用wordlist
-fetch('/wordlist')
+fetch('/yulewordlist')
     .then(response => response.text())
     .then(text => {
         processWordList(text);
@@ -376,7 +376,7 @@ function showInvalidWordMessage() {
 
 // 修改加载词典的函数名和路由
 function loadCSW22Dictionary() {
-    fetch('/csw22')  // 修改路由为csw22
+    fetch('/yulecsw22')  // 修改路由为csw22
         .then(response => response.text())
         .then(text => {
             text.split('\n').forEach(word => {

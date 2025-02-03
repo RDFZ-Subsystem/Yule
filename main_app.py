@@ -38,11 +38,11 @@ def MinesweeperGame():
 @app.route('/WordleGame')
 def WordleGame():
     return render_template("yule/source/WordleGame.html", t_home='/#games')
-@app.route('/wordlist')
+@app.route('/yulewordlist')
 def get_wordlist():
     with open('source/wordlist.txt', 'r', encoding='utf-8') as file:
         return file.read()
-@app.route('/csw22')
+@app.route('/yulecsw22')
 def get_csw22():
     with open('source/CSW22.txt', 'r', encoding='utf-8') as file:
         return file.read()
