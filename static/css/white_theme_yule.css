@@ -50,7 +50,7 @@ td {
 
 .title {
     text-align: center;
-    text-align: fixed;
+    top: 3%;
 }
 
 .contents_center {
@@ -68,7 +68,9 @@ td {
 }
 
 .copy {
-    text-align: right;
+    position: fixed;
+    right: 3%;
+    bottom: 3%;
 }
 
 .text_show {

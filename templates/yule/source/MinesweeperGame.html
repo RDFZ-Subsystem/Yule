@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper Game</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/yule/minesweeper.css') }}">
-    <link href="{{ url_for('static', filename='css/white_theme.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/white_theme_yule.css') }}" rel="stylesheet">
     {% if t_theme == 'black' %}
     <link href="{{ url_for('static', filename='css/black_theme.css') }}" rel="stylesheet">
     {% endif %}
+    <style>
+        .title {
+            position: fixed;
+        }
+    </style>
 </head>
 <body>
     <div class="title">

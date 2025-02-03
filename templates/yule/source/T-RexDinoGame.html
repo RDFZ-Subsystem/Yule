@@ -5,8 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>T-Rex Dino Game</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/yule/trex.css') }}">
+    <link href="{{ url_for('static', filename='css/white_theme_yule.css') }}" rel="stylesheet">
+    {% if t_theme == 'black' %}
+    <link href="{{ url_for('static', filename='css/black_theme.css') }}" rel="stylesheet">
+    {% endif %}
+    <style>
+        .title {
+            position: fixed;
+        }
+    </style>
 </head>
 <body>
+    <div class="title">
+        Yule - Subsystem
+        <a href="/"> Home </a>
+        |
+        <a href="/reciter"> Reciter </a>
+        |
+        <a href="/forum"> Forum </a>
+        |
+        <a href="/yule"> Yule </a>
+        |
+        <a href="/userlist"> Users </a>
+        |
+        {% if t_username == None %}
+            <a href="/login"> Login </a>
+        {% endif %}
+        {% if t_username != None %}
+            <a href="/login"> Switch Account </a>
+        |
+            <a href="/profile?username={{ t_username }}"> {{ t_username }} </a>
+        {% endif %}
+        <br>
+    </div>
     <button id="homeButton" onclick="window.location.href='{{ t_home }}'">Home Page</button>
     <div id="game">
         <div id="trex"></div>
@@ -19,7 +50,11 @@
         <p>尽量收集分数，看看你能跑多远！</p>
         <p>祝你好运，勇敢的飞行员！🌟</p>
     </div>
-
+    <div class="copy">
+        Developed by <a href="https://github.com/YCY5449">YCY5449</a>. <br>
+        2024 - 2025, &copy Subsystem Dev Team<br>
+        All rights reserved.
+    </div>
     <script src="{{ url_for('static', filename='javascript/yule/trex.js') }}"></script>
 </body>
 </html>
