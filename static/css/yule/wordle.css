@@ -475,3 +475,7 @@ body {
 #invalidWordMessage.show {
     opacity: 1;
 }
+
+.title {
+    position: fixed;
+}
