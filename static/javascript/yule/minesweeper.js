@@ -313,82 +313,98 @@ function toggleGameMode(mode) {
 
 // 修改无猜模式验证函数
 function isValidNoGuessBoard(startRow, startCol) {
-    // 创建访问标记数组
-    const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+    // 创建一个模拟游戏状态的数组
+    const revealed = Array.from({ length: rows }, () => Array(cols).fill(false));
+    const flagged = Array.from({ length: rows }, () => Array(cols).fill(false));
     
-    // 从给定的起始位置开始
+    // 从起始位置开始
     let queue = [{row: parseInt(startRow), col: parseInt(startCol)}];
-    visited[startRow][startCol] = true;
-
-    // 广度优先搜索
-    while (queue.length > 0) {
-        const {row, col} = queue.shift();
+    let progress = true;
+    
+    // 模拟第一次点击
+    revealSimulated(parseInt(startRow), parseInt(startCol), revealed, flagged);
+    
+    // 持续尝试解决棋盘，直到无法取得进展
+    while (progress) {
+        progress = false;
         
-        // 检查周围8个格子
-        for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
-                const newRow = row + i;
-                const newCol = col + j;
-                
-                if (newRow >= 0 && newRow < rows && 
-                    newCol >= 0 && newCol < cols && 
-                    !visited[newRow][newCol]) {
+        // 检查所有已揭示的格子
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                if (revealed[r][c] && board[r][c] !== 0 && board[r][c] !== 'M') {
+                    // 计算周围未揭示的格子和已标记的地雷
+                    let unrevealedCount = 0;
+                    let flaggedCount = 0;
+                    let unrevealedCells = [];
                     
-                    // 如果是安全格子
-                    if (board[newRow][newCol] !== 'M') {
-                        visited[newRow][newCol] = true;
-                        
-                        // 如果是空格子或数字为0的格子，加入队列继续搜索
-                        if (board[newRow][newCol] === 0) {
-                            queue.push({row: newRow, col: newCol});
-                        }
-                        // 如果是数字格子，检查是否有明显的下一步
-                        else {
-                            let mineCount = 0;
-                            let unrevealedCount = 0;
-                            // 检查这个数字格子周围的情况
-                            for (let di = -1; di <= 1; di++) {
-                                for (let dj = -1; dj <= 1; dj++) {
-                                    const checkRow = newRow + di;
-                                    const checkCol = newCol + dj;
-                                    if (checkRow >= 0 && checkRow < rows && 
-                                        checkCol >= 0 && checkCol < cols) {
-                                        if (board[checkRow][checkCol] === 'M') {
-                                            mineCount++;
-                                        }
-                                        if (!visited[checkRow][checkCol]) {
-                                            unrevealedCount++;
-                                        }
-                                    }
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            const newRow = r + i;
+                            const newCol = c + j;
+                            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                                if (!revealed[newRow][newCol]) {
+                                    unrevealedCount++;
+                                    unrevealedCells.push({row: newRow, col: newCol});
+                                }
+                                if (flagged[newRow][newCol]) {
+                                    flaggedCount++;
                                 }
                             }
-                            // 如果未访问的格子数等于数字，说明这些格子都是雷
-                            // 如果未访问的格子数等于周围的总雷数，说明其他格子都是安全的
-                            if (unrevealedCount === board[newRow][newCol] || 
-                                unrevealedCount === mineCount) {
-                                queue.push({row: newRow, col: newCol});
-                            }
                         }
+                    }
+                    
+                    // 情况1: 如果周围未揭示的格子数等于数字减去已标记的地雷数，则所有未揭示的格子都是地雷
+                    if (unrevealedCount === board[r][c] - flaggedCount) {
+                        unrevealedCells.forEach(cell => {
+                            if (!flagged[cell.row][cell.col]) {
+                                flagged[cell.row][cell.col] = true;
+                                progress = true;
+                            }
+                        });
+                    }
+                    
+                    // 情况2: 如果已标记的地雷数等于格子的数字，则所有未标记的格子都是安全的
+                    if (flaggedCount === board[r][c]) {
+                        unrevealedCells.forEach(cell => {
+                            if (!flagged[cell.row][cell.col] && !revealed[cell.row][cell.col]) {
+                                revealSimulated(cell.row, cell.col, revealed, flagged);
+                                progress = true;
+                            }
+                        });
                     }
                 }
             }
         }
     }
-
-    // 检查是否所有非地雷格子都可以被访问到
-    let safeSquares = 0;
+    
+    // 检查是否所有非地雷格子都被揭示
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-            if (board[r][c] !== 'M') {
-                safeSquares++;
-                if (!visited[r][c]) {
-                    return false;
-                }
+            if (board[r][c] !== 'M' && !revealed[r][c]) {
+                return false; // 存在无法通过逻辑推理揭示的安全格子
             }
         }
     }
+    
+    return true;
+}
 
-    return safeSquares === (rows * cols - minesCount);
+// 模拟揭示格子的函数
+function revealSimulated(row, col, revealed, flagged) {
+    if (row < 0 || row >= rows || col < 0 || col >= cols || revealed[row][col] || flagged[row][col]) {
+        return;
+    }
+    
+    revealed[row][col] = true;
+    
+    // 如果是空格子，递归揭示周围的格子
+    if (board[row][col] === 0) {
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                revealSimulated(row + i, col + j, revealed, flagged);
+            }
+        }
+    }
 }
 
 // 添加事件监听器
